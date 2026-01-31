@@ -1,0 +1,90 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_3m7b7"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="2_2f0v2"]
+
+[sub_resource type="Environment" id="1_v6jhl"]
+	background_mode = 2
+	background_color = Color(0.64, 0.8, 0.92, 1)
+	ambient_light_color = Color(0.45, 0.5, 0.55, 1)
+	ambient_light_energy = 1.2
+
+[sub_resource type="PlaneMesh" id="2_5ll1p"]
+	size = Vector2(40, 40)
+
+[sub_resource type="StandardMaterial3D" id="3_6r2kq"]
+	albedo_color = Color(0.2, 0.55, 0.2, 1)
+
+[sub_resource type="BoxShape3D" id="4_w0c1g"]
+	size = Vector3(40, 1, 40)
+
+[sub_resource type="BoxMesh" id="5_ey58v"]
+	size = Vector3(1, 2, 1)
+
+[sub_resource type="StandardMaterial3D" id="6_t47q4"]
+	albedo_color = Color(0.8, 0.7, 0.5, 1)
+
+[sub_resource type="BoxShape3D" id="7_l1nd6"]
+	size = Vector3(1, 2, 1)
+
+[node name="Main" type="Node3D"]
+	script = ExtResource("2_2f0v2")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+	environment = SubResource("1_v6jhl")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+	rotation = Vector3(-0.9, -0.8, 0)
+	light_energy = 1.3
+
+[node name="Player" parent="." instance=ExtResource("1_3m7b7")]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 5)
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+	mesh = SubResource("2_5ll1p")
+	surface_material_override/0 = SubResource("3_6r2kq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+	shape = SubResource("4_w0c1g")
+
+[node name="Villager" type="StaticBody3D" parent="."]
+	transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, 0)
+	groups = ["npc"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Villager"]
+	mesh = SubResource("5_ey58v")
+	surface_material_override/0 = SubResource("6_t47q4")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Villager"]
+	shape = SubResource("7_l1nd6")
+
+[node name="Label3D" type="Label3D" parent="Villager"]
+	text = "Villager"
+	billboard = 1
+	position = Vector3(0, 1.6, 0)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="PanelContainer" type="PanelContainer" parent="HUD"]
+	offset_left = 16.0
+	offset_top = 16.0
+	offset_right = 360.0
+	offset_bottom = 120.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/PanelContainer"]
+	theme_override_constants/separation = 6
+
+[node name="ControlsLabel" type="Label" parent="HUD/PanelContainer/VBoxContainer"]
+	text = "WASD: Move | Mouse: Look | Space: Jump | E: Interact | Esc: Release Mouse"
+	autowrap_mode = 3
+
+[node name="MessageLabel" type="Label" parent="HUD/PanelContainer/VBoxContainer"]
+	text = ""
+	autowrap_mode = 3
+
+[node name="MessageTimer" type="Timer" parent="."]
+	wait_time = 3.0
+	one_shot = true
